@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-
+import '@/utils/http'
 const memberStore = useMemberStore()
+
+// 测试请求
+const getDate = () => {
+  uni.request({
+    method: 'GET',
+    url: '/home/banner',
+  })
+}
 </script>
 
 <template>
@@ -20,6 +28,8 @@ const memberStore = useMemberStore()
       保存用户信息
     </button>
     <button @tap="memberStore.clearProfile()" size="mini" plain type="warn">清理用户信息</button>
+    <!-- @tap是uni-app框架的监听 其他是演示什么的 -->
+    <button @tap="getDate" size="mini" plain type="primary">测试请求</button>
   </view>
 </template>
 

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "sourceMap": true,
+    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
