@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-import '@/utils/http'
+import { http } from '@/utils/http'
 const memberStore = useMemberStore()
 
 // 测试请求
-const getDate = () => {
-  uni.request({
+const getDate = async () => {
+  const res = await http<number[]>({
     method: 'GET',
-    url: '/home/banner',
+    url: '',
+    header: {},
   })
+  console.log('请求成功', res.result)
 }
 </script>
 
@@ -28,7 +30,7 @@ const getDate = () => {
       保存用户信息
     </button>
     <button @tap="memberStore.clearProfile()" size="mini" plain type="warn">清理用户信息</button>
-    <!-- @tap是uni-app框架的监听 其他是演示什么的 -->
+    <!-- @tap是uni-app框架的监听 其他是样式什么的 -->
     <button @tap="getDate" size="mini" plain type="primary">测试请求</button>
   </view>
 </template>

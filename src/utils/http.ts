@@ -33,3 +33,64 @@ const httpInterceptor = {
 uni.addInterceptor('request', httpInterceptor)
 // 拦截 uploadFile 文件上传
 uni.addInterceptor('uploadFile', httpInterceptor)
+
+/**
+ * 请求函数
+ * @param  UniApp.RequestOptions
+ * @returns Promise
+ *  1. 返回 Promise 对象，用于处理返回值类型
+ *  2. 获取数据成功
+ *    2.1 提取核心数据 res.data
+ *    2.2 添加类型，支持泛型
+ *  3. 获取数据失败
+ *    3.1 401错误  -> 清理用户信息，跳转到登录页
+ *    3.2 其他错误 -> 根据后端错误信息轻提示
+ *    3.3 网络错误 -> 提示用户换网络
+ */
+type Data<T> = {
+  code: string
+  msg: string
+  result: T
+}
+// 2.2 添加类型，支持泛型
+export const http = <T>(options: UniApp.RequestOptions) => {
+  // 1. 返回 Promise 对象 一个异步处理函数 可以处于进行中、已成功、已失败三种状态 用于解决回调地域和异步代码复杂性问题
+  // 其中 resolve是成功调用的函数 另一个是失败调用的函数
+  return new Promise<Data<T>>((resolve, reject) => {
+    uni.request({
+      // 使用展开符 具体情况可以看我笔记的下面
+      ...options,
+      // 响应成功
+      success(res) {
+        // 状态码 2xx，参考 axios 的设计
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          // 2.1 提取核心数据 res.data as是强制转换
+          resolve(res.data as Data<T>)
+        } else if (res.statusCode === 401) {
+          // 401错误  -> 清理用户信息，跳转到登录页
+          const memberStore = useMemberStore()
+          memberStore.clearProfile()
+          uni.navigateTo({ url: '/pages/login/login' })
+          reject(res)
+        } else {
+          // 其他错误 -> 根据后端错误信息轻提示
+          uni.showToast({
+            // 指定不显示图标
+            icon: 'none',
+            // 如果请求数据中有msg则显示 否则标题为请求错误
+            title: (res.data as Data<T>).msg || '请求错误',
+          })
+          reject(res)
+        }
+      },
+      // 响应失败
+      fail(err) {
+        uni.showToast({
+          icon: 'none',
+          title: '网络错误，换个网络试试',
+        })
+        reject(err)
+      },
+    })
+  })
+}
