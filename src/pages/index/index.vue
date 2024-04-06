@@ -35,17 +35,28 @@ onLoad(() => {
 </script>
 
 <template>
+  <!-- 自定义导航栏 -->
   <CoustomNavbar />
-  <XtxSwiper :list="bannerList" />
-  <CategoryPanel :list="categoryList" />
-  <!-- 热门推荐 -->
-  <HotPanel :list="hotList" />
-  <view class="index">index </view>
+<!-- 使用这个来实现上面的不会滚动 -->
+  <scroll-view class="scroll-view" scroll-y>
+    <XtxSwiper :list="bannerList" />
+    <CategoryPanel :list="categoryList" />
+    <!-- 热门推荐 -->
+    <HotPanel :list="hotList" />
+    <!-- 猜你喜欢，已经在pages.json中实现了自动导入 -->
+    <XtxGuess />
+  </scroll-view>
 </template>
 
 <style lang="scss">
 // 修改小程序的颜色 类似html5中为body指定颜色
 page {
   background-color: #f7f7f7;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.scroll-view{
+  flex: 1;
 }
 </style>
