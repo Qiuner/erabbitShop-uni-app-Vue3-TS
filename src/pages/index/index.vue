@@ -8,7 +8,6 @@ import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/component'
 
-
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerDate = async () => {
