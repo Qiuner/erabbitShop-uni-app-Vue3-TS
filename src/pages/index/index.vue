@@ -6,7 +6,9 @@ import { onLoad } from '@dcloudio/uni-app'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
-import type { XtxGuessInstance } from '@/types/components'
+import type { XtxGuessInstance } from '@/types/component'
+
+
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerDate = async () => {
@@ -65,7 +67,8 @@ page {
   display: flex;
   flex-direction: column;
 }
-.scroll-view{
+
+.scroll-view {
   flex: 1;
 }
 </style>

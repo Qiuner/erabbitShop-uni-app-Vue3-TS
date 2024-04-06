@@ -1,21 +1,31 @@
 <script setup lang="ts">
 import { getHomeGoodsGuessLikeAPI } from '@/services/home'
-import type { GuessItem } from '@/types/home';
+import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
+import type { PageParams } from '@/types/global'
 
-const guessList=ref<GuessItem[]>([])
+// 分页参数
+const pageParams: Required<PageParams> = {
+  page: 1,
+  pageSize: 10,
+}
 
+const guessList = ref<GuessItem[]>([])
+// 猜你喜欢的列表
 const getHomeGoodsGuessLikeDate = async () => {
   const res = await getHomeGoodsGuessLikeAPI()
-  guessList.value=res.result.items
+  // guessList.value = res.result.items
+  // 数组的追加
+  guessList.value.push(...res.result.items)
+  // 页码的累加
+  pageParams.page++
 }
 // 组件挂在完毕
 onMounted(() => {
   getHomeGoodsGuessLikeDate()
 })
 defineExpose({
-  getMore: getHomeGoodsGuessLikeDate
-  
+  getMore: getHomeGoodsGuessLikeDate,
 })
 </script>
 
@@ -26,8 +36,7 @@ defineExpose({
   </view>
   <view class="guess">
     <navigator class="guess-item" v-for="item in guessList" :key="item.id" :url="`/pages/goods/goods?id=4007498`">
-      <image class="image" mode="aspectFill"
-        :src="item.picture"></image>
+      <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>
       <view class="price">
         <text class="small">¥</text>

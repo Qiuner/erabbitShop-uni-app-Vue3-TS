@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { CategoryItem } from '@/types/home';
-
+import type { CategoryItem } from '@/types/home'
 // 定义 props 接收
 defineProps<{
   list: CategoryItem[]

@@ -1,5 +1,5 @@
-import XtxSwiper from "@/components/XtxSwiper.vue";
-import XtxGuess from "@/components/XtxGuess.vue";
+import XtxSwiper from '@/components/XtxSwiper.vue'
+import XtxGuess from '@/components/XtxGuess.vue'
 
 /**
  * declare module '@vue/runtime-core'
@@ -14,4 +14,4 @@ declare module 'vue' {
   }
 }
 // 组件实例类型
-export type XtxGuessInstance=InstanceType<typeof XtxGuess>
+export type XtxGuessInstance = InstanceType<typeof XtxGuess>
