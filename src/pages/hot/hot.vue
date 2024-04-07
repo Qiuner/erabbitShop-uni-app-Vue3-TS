@@ -1,9 +1,9 @@
-// src/pages/hot/hot.vue
 <script setup lang="ts">
 import { getHotRecommendAPI } from '@/services/hot'
+import type { SubTypeItem } from '@/types/hot'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import type { SubTypeItem } from '@/types/hot'
+
 // 热门推荐页 标题和url
 const hotMap = [
   { type: '1', title: '特惠推荐', url: '/hot/preference' },
@@ -11,38 +11,73 @@ const hotMap = [
   { type: '3', title: '一站买全', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
 ]
+
 // uniapp 获取页面参数
 const query = defineProps<{
   type: string
 }>()
+// 获取当前推荐信息
 const currHot = hotMap.find((v) => v.type === query.type)
-// 动态设置标题 这里有跳转才会来到这里 所以不可能出现空值
+// 动态设置标题
 uni.setNavigationBarTitle({ title: currHot!.title })
+
 // 推荐封面图
 const bannerPicture = ref('')
-// 推荐选项
-const subTypes = ref<SubTypeItem[]>([])
-
+// 推荐选项 添加finish类型 两处要用 因此使用? 后端没有这个数据而其他地方要用
+const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
 // 高亮的下标
 const activeIndex = ref(0)
-
 // 获取热门推荐数据
-const getgetHotRecommendData = async () => {
-  const res = await getHotRecommendAPI(currHot!.url)
+const getHotRecommendData = async () => {
+  const res = await getHotRecommendAPI(currHot!.url, {
+    // 技巧：设置页面 环境变量，开发环境，修改初始页面方便测试分页结束
+    page: import.meta.env.DEV ? 30 : 1,
+    pageSize: 10,
+  })
+  // 保存封面
   bannerPicture.value = res.result.bannerPicture
+  // 保存列表
   subTypes.value = res.result.subTypes
 }
 
+// 页面加载
 onLoad(() => {
-  getgetHotRecommendData()
+  getHotRecommendData()
 })
+
+// 滚动触底
+const onScrolltolower = async () => {
+  // 获取当前选项
+  const currsubTypes = subTypes.value[activeIndex.value]
+  // 分页条件
+  if (currsubTypes.goodsItems.page < currsubTypes.goodsItems.pages) {
+    // 当前页码累加
+    currsubTypes.goodsItems.page++
+  } else {
+    // 标记已结束
+    currsubTypes.finish = true
+    // 退出并轻提示
+    return uni.showToast({ icon: 'none', title: '没有更多数据了~' })
+  }
+
+  // 调用API传参
+  const res = await getHotRecommendAPI(currHot!.url, {
+    subType: currsubTypes.id,
+    page: currsubTypes.goodsItems.page,
+    pageSize: currsubTypes.goodsItems.pageSize,
+  })
+  // 新的列表选项
+  const newsubTypes = res.result.subTypes[activeIndex.value]
+  // 数组追加
+  currsubTypes.goodsItems.items.push(...newsubTypes.goodsItems.items)
+}
 </script>
 
 <template>
   <view class="viewport">
     <!-- 推荐封面图 -->
     <view class="cover">
-      <image :src="bannerPicture"> </image>
+      <image :src="bannerPicture"></image>
     </view>
     <!-- 推荐选项 -->
     <view class="tabs">
@@ -54,7 +89,6 @@ onLoad(() => {
         @tap="activeIndex = index"
         >{{ item.title }}</text
       >
-      <text class="text">新品预告</text>
     </view>
     <!-- 推荐列表 -->
     <scroll-view
@@ -63,6 +97,7 @@ onLoad(() => {
       v-show="activeIndex === index"
       scroll-y
       class="scroll-view"
+      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
         <navigator
@@ -80,7 +115,9 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">
+        {{ item.finish ? '没有更多数据了~' : '正在加载...' }}
+      </view>
     </scroll-view>
   </view>
 </template>
