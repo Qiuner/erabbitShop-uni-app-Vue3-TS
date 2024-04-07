@@ -12,7 +12,7 @@ const pageParams: Required<PageParams> = {
 
 const guessList = ref<GuessItem[]>([])
 // 已结束标志
-const finish =ref(false)
+const finish = ref(false)
 // 猜你喜欢的列表
 const getHomeGoodsGuessLikeDate = async () => {
   if (finish.value === true) {
@@ -30,12 +30,21 @@ const getHomeGoodsGuessLikeDate = async () => {
     finish.value = true
   }
 }
+
+// src/components/XtxGuess.vue
+// 重置数据
+const resetData = () => {
+  pageParams.page = 1
+  guessList.value = []
+  finish.value = false
+}
 // 组件挂在完毕
 onMounted(() => {
   getHomeGoodsGuessLikeDate()
 })
 defineExpose({
   getMore: getHomeGoodsGuessLikeDate,
+  resetData,
 })
 </script>
 
@@ -45,7 +54,12 @@ defineExpose({
     <text class="text">猜你喜欢</text>
   </view>
   <view class="guess">
-    <navigator class="guess-item" v-for="item in guessList" :key="item.id" :url="`/pages/goods/goods?id=4007498`">
+    <navigator
+      class="guess-item"
+      v-for="item in guessList"
+      :key="item.id"
+      :url="`/pages/goods/goods?id=4007498`"
+    >
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>
       <view class="price">
@@ -54,7 +68,7 @@ defineExpose({
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> {{ finish ? '没有更多数据~' : '正在加载...' }}} </view>
+  <view class="loading-text"> {{ finish ? '没有更多数据~' : '正在加载...' }} </view>
 </template>
 
 <style lang="scss">

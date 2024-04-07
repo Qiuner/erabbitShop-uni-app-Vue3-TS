@@ -42,13 +42,34 @@ onLoad(() => {
   getHomeCategoryDate()
   getgetHomeHotDate()
 })
+// 下拉刷新状态
+const isTriggered = ref(false)
+// 自定义下拉刷新被触发
+const onRefresherrefresh = async () => {
+  console.log('被下拉')
+  // 开启动画
+  isTriggered.value = true
+  // 重置猜你喜欢组件数据
+  guessRef.value?.resetData() // 加载数据
+  await Promise.all([getHomeBannerDate(), getHomeCategoryDate(), getgetHomeHotDate()])
+  // 关闭动画
+  isTriggered.value = false
+}
 </script>
 
 <template>
   <!-- 自定义导航栏 -->
   <CoustomNavbar />
   <!-- 使用这个来实现上面的不会滚动 -->
-  <scroll-view scroll-y @scrolltolower="onScrolltolower">
+  <!-- <scroll-view scroll-y @scrolltolower="onScrolltolower"> -->
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    @scrolltolower="onScrolltolower"
+    :refresher-triggered="isTriggered"
+    class="scroll-view"
+    scroll-y
+  >
     <XtxSwiper :list="bannerList" />
     <CategoryPanel :list="categoryList" />
     <!-- 热门推荐 -->
