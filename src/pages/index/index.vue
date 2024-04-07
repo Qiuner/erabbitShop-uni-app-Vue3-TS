@@ -7,6 +7,7 @@ import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/component'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
@@ -36,11 +37,13 @@ const guessRef = ref<XtxGuessInstance>()
 const onScrolltolower = () => {
   guessRef.value?.getMore()
 }
-
-onLoad(() => {
-  getHomeBannerDate()
-  getHomeCategoryDate()
-  getgetHomeHotDate()
+// 是否加载中标记
+const isLoading = ref(false)
+// 加载设置
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerDate(), getHomeCategoryDate(), getgetHomeHotDate()])
+  isLoading.value = false
 })
 // 下拉刷新状态
 const isTriggered = ref(false)
@@ -51,7 +54,12 @@ const onRefresherrefresh = async () => {
   isTriggered.value = true
   // 重置猜你喜欢组件数据
   guessRef.value?.resetData() // 加载数据
-  await Promise.all([getHomeBannerDate(), getHomeCategoryDate(), getgetHomeHotDate()])
+  await Promise.all([
+    getHomeBannerDate(),
+    getHomeCategoryDate(),
+    getgetHomeHotDate(),
+    guessRef.value?.getMore(),
+  ])
   // 关闭动画
   isTriggered.value = false
 }
@@ -70,12 +78,15 @@ const onRefresherrefresh = async () => {
     class="scroll-view"
     scroll-y
   >
-    <XtxSwiper :list="bannerList" />
-    <CategoryPanel :list="categoryList" />
-    <!-- 热门推荐 -->
-    <HotPanel :list="hotList" />
-    <!-- 猜你喜欢，已经在pages.json中实现了自动导入 -->
-    <XtxGuess ref="guessRef" />
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <XtxSwiper :list="bannerList" />
+      <CategoryPanel :list="categoryList" />
+      <!-- 热门推荐 -->
+      <HotPanel :list="hotList" />
+      <!-- 猜你喜欢，已经在pages.json中实现了自动导入 -->
+      <XtxGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
