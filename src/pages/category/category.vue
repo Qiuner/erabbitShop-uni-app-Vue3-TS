@@ -6,6 +6,7 @@ import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed } from 'vue'
 import { ref } from 'vue'
+import PageSkeleton from '../index/components/PageSkeleton.vue'
 
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
@@ -24,21 +25,24 @@ const getCategoryTopData = async () => {
 // 高亮下标
 const activeIndex = ref(0)
 
-// 页面加载
-onLoad(() => {
-  getHomeBannerDate()
-  getCategoryTopData()
-})
-
 // 提取当前二级分类数据
 const subCategoryList = computed(() => {
   // 这里可能存在空数组
   return categoryList.value[activeIndex.value]?.children || []
 })
+
+// 是否数据加载完毕
+const isFinish = ref(false)
+
+// 页面加载
+onLoad(async () => {
+  await Promise.all([getHomeBannerDate(), getCategoryTopData()])
+  isFinish.value = true
+})
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="isFinish">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
@@ -62,7 +66,7 @@ const subCategoryList = computed(() => {
       <!-- 右侧：二级分类 -->
       <scroll-view class="secondary" scroll-y>
         <!-- 焦点图 -->
-        <XtxSwiper class="banner" :list="[]" />
+        <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
         <view class="panel" v-for="item in subCategoryList" :key="item.id">
           <view class="title">
@@ -89,6 +93,7 @@ const subCategoryList = computed(() => {
       </scroll-view>
     </view>
   </view>
+  <PageSkeleton v-else />
 </template>
 
 <style lang="scss">
