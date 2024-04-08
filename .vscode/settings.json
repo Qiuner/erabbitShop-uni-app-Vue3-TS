@@ -1,37 +1,28 @@
 {
-  // 在保存时格式化文件
   "editor.formatOnSave": true,
-   "javascript.format.semicolons": "remove",
-  // 文件格式化配置
-  "[json]": {
+  "javascript.format.semicolons": "remove",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.useEditorConfig": true,
+  "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "none",
+  "prettier.semi": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.tslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+  "files.associations": {
+    "pages.json": "jsonc",
+    "manifest.json": "jsonc"
+  },
+  "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  // 配置语言的文件关联
-  "files.associations": {
-    "pages.json": "jsonc", // pages.json 可以写注释
-    "manifest.json": "jsonc" // manifest.json 可以写注释
+  "[html]": {
+    "editor.defaultFormatter": "HookyQR.beautify"
+  },
+  "files.exclude": {
+    "node_modules": true
   }
-   "prettier.useEditorConfig": true,
-    "prettier.jsxSingleQuote": true,
-    "prettier.singleQuote": true,
-    "prettier.trailingComma": "none",
-    "prettier.semi": false,
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-        // For ESLint
-        "source.fixAll.eslint": true,
-        // For TSLint
-        "source.fixAll.tslint": true,
-        // For Stylelint
-        "source.fixAll.stylelint": true
-    },
-    "[html]": {
-        "editor.defaultFormatter": "HookyQR.beautify"
-    },
-    "files.exclude": {
-        "node_modules": true
-    },
 }
