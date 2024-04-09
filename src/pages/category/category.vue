@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import { getCategoryTopAPI } from '@/services/category'
-import { getHomeBannerAPI } from '@/services/home'
 import type { CategoryTopItem } from '@/types/category'
-import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import PageSkeleton from './components/PageSkeleton.vue'
-
-// 获取轮播图数据
-const bannerList = ref<BannerItem[]>([])
-const getBannerData = async () => {
-  const res = await getHomeBannerAPI(2)
-  bannerList.value = res.result
-}
+import { useBannerList } from '@/composables/index'
+const { getBannerData, bannerList } = useBannerList()
 
 // 获取分类列表数据
 const categoryList = ref<CategoryTopItem[]>([])

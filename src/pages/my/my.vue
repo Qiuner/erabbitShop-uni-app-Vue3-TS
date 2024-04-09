@@ -2,7 +2,7 @@
 
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-
+import { useGuessList } from '@/composables/index'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 订单选项
@@ -14,6 +14,8 @@ const orderTypes = [
 ]
 // 获取会员信息
 const memberStore = useMemberStore()
+
+useGuessList()
 </script>
 
 <template>
