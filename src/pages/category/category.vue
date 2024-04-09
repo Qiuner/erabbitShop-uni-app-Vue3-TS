@@ -5,6 +5,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useBannerList } from '@/composables/index'
+
 const { getBannerData, bannerList } = useBannerList()
 
 // 获取分类列表数据

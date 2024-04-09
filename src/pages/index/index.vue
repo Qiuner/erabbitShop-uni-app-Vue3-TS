@@ -8,13 +8,15 @@ import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
+import { useBannerList } from '@/composables/index'
 
+const { getBannerData: getHomeBannerDate, bannerList } = useBannerList()
 // 获取轮播图数据
-const bannerList = ref<BannerItem[]>([])
-const getHomeBannerDate = async () => {
-  const res = await getHomeBannerAPI()
-  bannerList.value = res.result
-}
+// const bannerList = ref<BannerItem[]>([])
+// const getHomeBannerDate = async () => {
+//   const res = await getHomeBannerAPI()
+//   bannerList.value = res.result
+// }
 
 // 获取前台数据
 const categoryList = ref<CategoryItem[]>([])
