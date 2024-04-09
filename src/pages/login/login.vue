@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app'
 import { postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
+import { useMemberStore } from '@/stores'
+import type { LoginResult } from '@/types/member'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 获取 code 登录凭证
 let code = ''
@@ -9,20 +11,31 @@ onLoad(async () => {
   code = res.code
 })
 
-// 获取用户手机号码(企业中的写法 需要有企业账号)
+// 获取用户手机号码（企业中写法）
 const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
-  // 获取参数
   const encryptedData = ev.detail.encryptedData!
   const iv = ev.detail.iv!
-  // 登录请求
   const res = await postLoginWxMinAPI({ code, encryptedData, iv })
-  // 成功提示
-  uni.showToast({ icon: 'none', title: '登录成功' })
+  loginSuccess(res.result)
 }
-// 模拟手机号码快捷登录
+
+// 模拟手机号码快捷登录（开发练习）
 const onGetphonenumberSimple = async () => {
-  const res = await postLoginWxMinSimpleAPI('17338870680')
-  uni.showToast({ icon: 'none', title: '登录成功' })
+  const res = await postLoginWxMinSimpleAPI('13123456789')
+  loginSuccess(res.result)
+}
+
+const loginSuccess = (profile: LoginResult) => {
+  // 保存会员信息
+  const memberStore = useMemberStore()
+  memberStore.setProfile(profile)
+  // 成功提示
+  uni.showToast({ icon: 'success', title: '登录成功' })
+  // 使用这段代码是因为 跳转tab页面会销毁掉之前的页面 所以会看不到提示
+  setTimeout(() => {
+    // 页面跳转
+    uni.switchTab({ url: '/pages/my/my' })
+  }, 500)
 }
 </script>
 
