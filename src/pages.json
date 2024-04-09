@@ -44,7 +44,7 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-        "navigationStyle": "custom", // 隐藏默认导航
+				"navigationStyle": "custom", // 隐藏默认导航
 				"navigationBarTextStyle": "white",
 				"navigationBarTitleText": "登录"
 			}
@@ -100,5 +100,26 @@
 				"selectedIconPath": "static/tabs/user_selected.png"
 			}
 		]
-	}
+	},
+	"subPackages": [
+{
+  "root": "pagesMember",
+  "pages": [
+    {
+      "path": "settings/settings",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    }
+  ]
+}
+	],
+  // 分包预下载
+    "preloadRule": {
+    "pages/my/my": {
+      "network": "all",
+      "packages": ["pagesMember"]
+    }
+  }
+
 }

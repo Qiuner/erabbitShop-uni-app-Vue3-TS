@@ -16,6 +16,9 @@ const orderTypes = [
 const memberStore = useMemberStore()
 
 useGuessList()
+const testclick = () => {
+  console.log('点击了设置')
+}
 </script>
 
 <template>
