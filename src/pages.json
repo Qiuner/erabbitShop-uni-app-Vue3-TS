@@ -44,6 +44,8 @@
 		{
 			"path": "pages/login/login",
 			"style": {
+        "navigationStyle": "custom", // 隐藏默认导航
+				"navigationBarTextStyle": "white",
 				"navigationBarTitleText": "登录"
 			}
 		},
