@@ -56,10 +56,11 @@ const onAvatarChange = () => {
 }
 
 const onSubmit = async () => {
-  console.log('123')
+  const { nickname, gender, birthday } = profile.value
   const res = await putMemberProfileAPI({
-    nickname: profile.value?.nickname,
-    gender: profile.value.gender,
+    nickname,
+    gender,
+    birthday,
   })
   // 更新store昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -71,6 +72,20 @@ const onSubmit = async () => {
 // 这里将gender设置的类型不是string 所以需要使用as 指定为gender
 const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
   profile.value.gender = ev.detail.value as Gender
+}
+
+// 修改生日
+const onBirthdayChange: UniHelper.DatePickerOnChange = (ev) => {
+  profile.value.birthday = ev.detail.value
+}
+
+// 修改城市
+let fullLocationCode: [string, string, string] = ['', '', '']
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
+  // 修改前端界面
+  profile.value.fullLocation = ev.detail.value.join(' ')
+  // 提交后端更新
+  fullLocationCode = ev.detail.code!
 }
 </script>
 
@@ -114,22 +129,28 @@ const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
           </radio-group>
         </view>
         <view class="form-item">
-          <text class="label">出生日期</text>
+          <text class="label">生日</text>
           <picker
             class="picker"
             mode="date"
-            :value="profile?.birthday"
             start="1900-01-01"
             :end="new Date()"
+            :value="profile.birthday"
+            @change="onBirthdayChange"
           >
-            <view v-if="profile?.birthday">{{ profile?.birthday }}</view>
+            <view v-if="profile.birthday">{{ profile.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" :value="profile?.fullLocation?.split(' ')" mode="region">
-            <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
+          <picker
+            class="picker"
+            mode="region"
+            :value="profile.fullLocation?.split(' ')"
+            @change="onFullLocationChange"
+          >
+            <view v-if="profile.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
         </view>
