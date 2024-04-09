@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { useMemberStore } from '@/stores'
-import type { ProfileDetail } from '@/types/member'
+import type { Gender, ProfileDetail } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
@@ -59,6 +59,7 @@ const onSubmit = async () => {
   console.log('123')
   const res = await putMemberProfileAPI({
     nickname: profile.value?.nickname,
+    gender: profile.value.gender,
   })
   // 更新store昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -66,6 +67,10 @@ const onSubmit = async () => {
   setTimeout(() => {
     uni.navigateBack()
   }, 400)
+}
+// 这里将gender设置的类型不是string 所以需要使用as 指定为gender
+const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
+  profile.value.gender = ev.detail.value as Gender
 }
 </script>
 
@@ -97,7 +102,7 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
               男
