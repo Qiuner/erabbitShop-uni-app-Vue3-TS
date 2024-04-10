@@ -55,20 +55,6 @@ const onAvatarChange = () => {
   })
 }
 
-const onSubmit = async () => {
-  const { nickname, gender, birthday } = profile.value
-  const res = await putMemberProfileAPI({
-    nickname,
-    gender,
-    birthday,
-  })
-  // 更新store昵称
-  memberStore.profile!.nickname = res.result.nickname
-  uni.showToast({ icon: 'success', title: '保存成功' })
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 400)
-}
 // 这里将gender设置的类型不是string 所以需要使用as 指定为gender
 const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
   profile.value.gender = ev.detail.value as Gender
@@ -86,6 +72,25 @@ const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
   profile.value.fullLocation = ev.detail.value.join(' ')
   // 提交后端更新
   fullLocationCode = ev.detail.code!
+}
+
+const onSubmit = async () => {
+  const { nickname, gender, birthday, profession } = profile.value
+  const res = await putMemberProfileAPI({
+    nickname,
+    gender,
+    birthday,
+    profession,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
+  })
+  // 更新store昵称
+  memberStore.profile!.nickname = res.result.nickname
+  uni.showToast({ icon: 'success', title: '保存成功' })
+  setTimeout(() => {
+    uni.navigateBack()
+  }, 400)
 }
 </script>
 

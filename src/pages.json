@@ -114,9 +114,21 @@
 				{
 					"path": "profile/profile",
 					"style": {
-            "navigationStyle": "custom",
-            "navigationBarTextStyle": "white",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "white",
 						"navigationBarTitleText": "个人信息页"
+					}
+				},
+				{
+					"path": "address/address",
+					"style": {
+						"navigationBarTitleText": "地址管理"
+					}
+				},
+				{
+					"path": "address-form/address-form",
+					"style": {
+						"navigationBarTitleText": "address-form"
 					}
 				}
 			]
