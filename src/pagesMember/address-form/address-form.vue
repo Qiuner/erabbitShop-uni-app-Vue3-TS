@@ -16,6 +16,8 @@ const form = ref({
 
 // 收集所在地区
 const onRegionChange: UniHelper.RegionPickerOnChange = (ev) => {
+  console.log(ev)
+
   // 省市区(前端展示)
   form.value.fullLocation = ev.detail.value.join(' ')
   // 省市区(后端参数)
