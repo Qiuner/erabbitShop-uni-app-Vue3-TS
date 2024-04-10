@@ -1,5 +1,6 @@
 <!-- 步进器 -->
 <template>
+
   <view class="vk-data-input-number-box">
     <view
       class="u-icon-minus"
@@ -417,6 +418,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* eslint-disable */
+
 .vk-data-input-number-box {
   display: inline-flex;
   align-items: center;
