@@ -1,6 +1,5 @@
 <!-- 步进器 -->
 <template>
-
   <view class="vk-data-input-number-box">
     <view
       class="u-icon-minus"
@@ -54,6 +53,8 @@
   </view>
 </template>
 <script>
+/* eslint-disable */
+
 /**
  * numberBox 步进器（此为uview组件改造）
  * @description 该组件一般用于商城购物选择物品数量的场景。注意：该输入框只能输入大于或等于0的整数，不支持小数输入
@@ -375,11 +376,12 @@ export default {
           val -= strictly
         }
       }
-      if (val > this.max) {
+       if (val > this.max) {
         val = this.max
-      } else if (val <script this.min) {
+      } else if (val < this.min) {
         val = this.min
       }
+
       this.$nextTick(() => {
         this.inputVal = val
       })
@@ -418,8 +420,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* eslint-disable */
-
 .vk-data-input-number-box {
   display: inline-flex;
   align-items: center;
