@@ -34,7 +34,8 @@ const loginSuccess = (profile: LoginResult) => {
   // 使用这段代码是因为 跳转tab页面会销毁掉之前的页面 所以会看不到提示
   setTimeout(() => {
     // 页面跳转
-    uni.switchTab({ url: '/pages/my/my' })
+    // uni.switchTab({ url: '/pages/my/my' })
+    uni.navigateBack()
   }, 500)
 }
 </script>
