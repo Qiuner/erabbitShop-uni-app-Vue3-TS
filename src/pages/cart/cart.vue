@@ -1,6 +1,11 @@
 <script setup lang="ts">
 // 获取会员store
-import { getMemberCartAPI, deleteMemberCartAPI, putMemberCartSelectedAPI } from '@/services/cart'
+import {
+  getMemberCartAPI,
+  deleteMemberCartAPI,
+  putMemberCartBySkuIdAPI,
+  putMemberCartSelectedAPI,
+} from '@/services/cart'
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
@@ -45,10 +50,6 @@ onShow(() => {
 // 修改商品数量
 const onChangeCount = (ev: InputNumberBoxEvent) => {
   putMemberCartBySkuIdAPI(ev.index, { count: ev.value })
-}
-
-function putMemberCartBySkuIdAPI(index: any, arg1: { count: any }) {
-  throw new Error('Function not implemented.')
 }
 
 // 修改选中状态-单品修改
