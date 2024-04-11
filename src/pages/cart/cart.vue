@@ -6,6 +6,7 @@ import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { useGuessList } from '@/composables/index'
+import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 // 获取会员Store
 const memberStore = useMemberStore()
 
@@ -40,6 +41,15 @@ onShow(() => {
     getMemberCartData()
   }
 })
+
+// 修改商品数量
+const onChangeCount = (ev: InputNumberBoxEvent) => {
+  putMemberCartBySkuIdAPI(ev.index, { count: ev.value })
+}
+
+function putMemberCartBySkuIdAPI(index: any, arg1: { count: any }) {
+  throw new Error('Function not implemented.')
+}
 </script>
 
 <template>
@@ -75,9 +85,16 @@ onShow(() => {
               </navigator>
               <!-- 商品数量 -->
               <view class="count">
-                <text class="text">-</text>
-                <input class="input" type="number" :value="item.count.toString" />
-                <text class="text">+</text>
+                <!-- 商品数量 -->
+                <view class="count">
+                  <vk-data-input-number-box
+                    v-model="item.count"
+                    :min="1"
+                    :max="item.stock"
+                    :index="item.skuId"
+                    @change="onChangeCount"
+                  />
+                </view>
               </view>
             </view>
             <!-- 右侧删除按钮 -->
