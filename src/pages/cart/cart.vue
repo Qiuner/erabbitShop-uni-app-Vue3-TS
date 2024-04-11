@@ -5,6 +5,7 @@ import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { useGuessList } from '@/composables/index'
 // 获取会员Store
 const memberStore = useMemberStore()
 
@@ -14,6 +15,8 @@ const getMemberCartData = async () => {
   const res = await getMemberCartAPI()
   cartList.value = res.result
 }
+
+const { guessRef, onScrolltolower } = useGuessList()
 
 // 初始化调用: 页面显示触发
 onShow(() => {
@@ -25,7 +28,7 @@ onShow(() => {
 </script>
 
 <template>
-  <scroll-view scroll-y class="scroll-view">
+  <scroll-view scroll-y class="scroll-view" @scrolltolower="onScrolltolower">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
