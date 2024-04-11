@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // 获取会员store
-import { getMemberCartAPI, deleteMemberCartAPI } from '@/services/cart'
+import { getMemberCartAPI, deleteMemberCartAPI, putMemberCartSelectedAPI } from '@/services/cart'
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useGuessList } from '@/composables/index'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 // 获取会员Store
@@ -50,6 +50,31 @@ const onChangeCount = (ev: InputNumberBoxEvent) => {
 function putMemberCartBySkuIdAPI(index: any, arg1: { count: any }) {
   throw new Error('Function not implemented.')
 }
+
+// 修改选中状态-单品修改
+const onChangeSelected = (item: CartItem) => {
+  // 前端数据更新-是否选中取反
+  item.selected = !item.selected
+  // 后端数据更新
+  putMemberCartBySkuIdAPI(item.skuId, { selected: item.selected })
+}
+
+// 计算全选状态
+const isSelectedAll = computed(() => {
+  return cartList.value.length && cartList.value.every((v) => v.selected)
+})
+
+// 修改选中状态-全选修改
+const onChangeSelectedAll = () => {
+  // 全选状态取反
+  const _isSelectedAll = !isSelectedAll.value
+  // 前端数据更新
+  cartList.value.forEach((item) => {
+    item.selected = _isSelectedAll
+  })
+  // 后端数据更新
+  putMemberCartSelectedAPI({ selected: _isSelectedAll })
+}
 </script>
 
 <template>
@@ -70,7 +95,12 @@ function putMemberCartBySkuIdAPI(index: any, arg1: { count: any }) {
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: item.selected }"></text>
+              <text
+                @tap="onChangeSelected(item)"
+                class="checkbox"
+                :class="{ checked: item.selected }"
+              >
+              </text>
               <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
@@ -118,7 +148,7 @@ function putMemberCartBySkuIdAPI(index: any, arg1: { count: any }) {
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">
