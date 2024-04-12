@@ -1,6 +1,14 @@
 // AddressPanel.vue
 <script setup lang="ts">
-//
+import { useAddressList } from '@/composables'
+import { defineProps } from 'vue'
+import type { AddressItem } from '@/types/address'
+
+const props = defineProps<{
+  addressList: AddressItem[]
+}>()
+
+const addressList = props.addressList
 </script>
 
 <template>
@@ -10,21 +18,11 @@
     <!-- 标题 -->
     <view class="title">配送至</view>
     <!-- 内容 -->
-    <view class="content">
+    <view class="content" v-for="QiuAddress in addressList" :key="QiuAddress.id">
       <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
+        <view class="user">{{ QiuAddress.receiver }} {{ QiuAddress.contact }} </view>
+        <view class="address">{{ QiuAddress.fullLocation }}{{ QiuAddress.address }}</view>
         <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
       </view>
     </view>
     <view class="footer">

@@ -10,8 +10,8 @@ import type {
   SkuPopupInstance,
   SkuPopupLocaldata,
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
-import { postMemberAddressAPI } from '@/services/address'
 import { postMemberCartAPI } from '@/services/cart'
+import { useAddressList } from '@/composables'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -45,7 +45,6 @@ const popup = ref<{
 // 弹出层条件渲染
 const popupName = ref<'address' | 'service'>()
 const openPopup = (name: typeof popupName.value) => {
-  // 修改弹出层名称
   popupName.value = name
   popup.value?.open()
 }
@@ -78,10 +77,11 @@ const getGoodsByIdData = async () => {
 const isShowSku = ref(false)
 // 商品信息
 const localdata = ref({} as SkuPopupLocaldata)
-
+// 地址列表数据 打算以传递的方式传过去
+const { addressList, getMemberAddressData } = useAddressList()
 // 页面加载
 onLoad(() => {
-  getGoodsByIdData()
+  getGoodsByIdData(), getMemberAddressData()
 })
 // 按钮的模式
 enum SkuMode {
@@ -171,7 +171,7 @@ const onBuyNow = (ev: SkuPopupEvent) => {
         </view>
         <view @tap="openPopup('address')" class="item arrow">
           <text class="label">送至</text>
-          <text class="text ellipsis"> 请选择收获地址 </text>
+          <text class="text ellipsis"> 请选择收货地址 </text>
         </view>
         <view @tap="openPopup('service')" class="item arrow">
           <text class="label">服务</text>
@@ -179,6 +179,15 @@ const onBuyNow = (ev: SkuPopupEvent) => {
         </view>
       </view>
     </view>
+    <!-- uni-ui 弹出层 -->
+    <uni-popup ref="popup" type="bottom" background-color="#fff">
+      <AddressPanel
+        v-if="popupName === 'address'"
+        :addressList="addressList"
+        @close="popup?.close()"
+      />
+      <ServicePanel v-if="popupName === 'service'" @close="popup?.close()" />
+    </uni-popup>
 
     <!-- 商品详情 -->
     <view class="detail panel">
@@ -243,12 +252,6 @@ const onBuyNow = (ev: SkuPopupEvent) => {
       <view @tap="openSkuPopup(SkuMode.Buy)" class="payment"> 立即购买 </view>
     </view>
   </view>
-
-  <!-- uni-ui 弹出层 -->
-  <uni-popup ref="popup" type="bottom" background-color="#fff">
-    <AddressPanel v-if="popupName === 'address'" @close="popup?.close()" />
-    <ServicePanel v-if="popupName === 'service'" @close="popup?.close()" />
-  </uni-popup>
 </template>
 
 <style lang="scss">
