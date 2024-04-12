@@ -1,6 +1,9 @@
+import { useAddressStore } from './../stores/modules/address'
 // src/composables/index.ts
 
+import { getMemberAddressAPI } from '@/services/address'
 import { getHomeBannerAPI } from '@/services/home'
+import type { AddressItem } from '@/types/address'
 import type { XtxGuessInstance } from '@/types/component'
 import type { BannerItem } from '@/types/home'
 import { ref } from 'vue'
@@ -30,4 +33,14 @@ export const useBannerList = () => {
   }
 
   return { getBannerData, bannerList }
+}
+
+// 获取收货地址列表数据
+export const useAddressList = () => {
+  const addressList = ref<AddressItem[]>([])
+  const getMemberAddressData = async () => {
+    const res = await getMemberAddressAPI()
+    addressList.value = res.result
+  }
+  return { addressList, getMemberAddressData }
 }
