@@ -5,6 +5,7 @@ import { onLoad, onReady } from '@dcloudio/uni-app'
 import {
   deleteMemberOrderAPI,
   getMemberOrderByIdAPI,
+  getMemberOrderCancelByIdAPI,
   getMemberOrderConsignmentByIdAPI,
   getMemberOrderLogisticsByIdAPI,
   getRepurchaseOrderByIdAPI,
@@ -96,7 +97,7 @@ const getMemberOrderLogisticsByIdData = async () => {
 }
 
 onLoad(() => {
-  getMemberOrderByIdData()
+  getMemberOrderByIdData(), console.log(order)
 })
 // 再次购买接口
 // TODO
@@ -161,6 +162,17 @@ const onOrderDelete = () => {
       }
     },
   })
+}
+
+// 取消理由
+const cancelReason = reason.value
+// 确认取消函数
+const CancelOrder = () => {
+  getMemberOrderCancelByIdAPI(order.value!.id, { cancelReason })
+  uni.showToast({ icon: 'success', title: '取消成功' })
+  setTimeout(() => {
+    uni.redirectTo({ url: `/pages/cart/cart` })
+  }, 400)
 }
 </script>
 
@@ -361,7 +373,7 @@ const onOrderDelete = () => {
       </view>
       <view class="footer">
         <view class="button" @tap="popup?.close?.()">取消</view>
-        <view class="button primary">确认</view>
+        <view class="button primary" @tap="CancelOrder()">确认</view>
       </view>
     </view>
   </uni-popup>
@@ -804,4 +816,3 @@ page {
   }
 }
 </style>
-import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
