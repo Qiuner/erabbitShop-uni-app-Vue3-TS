@@ -1,50 +1,98 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import OrderList from './components/OrderList.vue'
+import { OrderState } from '@/services/constants'
+import { orderStateList } from '@/services/constants'
+import { getMemberOrderAPI } from '@/services/order'
+import type { OrderItem } from '@/types/order'
+import type { OrderListParams } from '@/types/order'
+import { onMounted, ref } from 'vue'
 
-// tabs 数据
-const orderTabs = ref([
-  { orderState: 0, title: '全部' },
-  { orderState: 1, title: '待付款' },
-  { orderState: 2, title: '待发货' },
-  { orderState: 3, title: '待收货' },
-  { orderState: 4, title: '待评价' },
-])
-// 获取页面参数
-const query = defineProps<{
-  type: string
+// 获取屏幕边界到安全区域距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
+
+// 定义 porps
+const props = defineProps<{
+  orderState: number
 }>()
-// 高亮下标
 
-const activeIndex = ref(orderTabs.value.findIndex((v) => v.orderState === Number(query.type)))
+// 请求参数
+const queryParams: OrderListParams = {
+  page: 1,
+  pageSize: 5,
+  orderState: props.orderState,
+}
+
+// 获取订单列表
+const orderList = ref<OrderItem[]>([])
+const getMemberOrderData = async () => {
+  const res = await getMemberOrderAPI(queryParams)
+  orderList.value = res.result.items
+}
+
+onMounted(() => {
+  getMemberOrderData()
+})
 </script>
 
 <template>
-  <view class="viewport">
-    <!-- tabs -->
-    <view class="tabs">
-      <text
-        class="item"
-        v-for="(item, index) in orderTabs"
-        :key="item.title"
-        @tap="activeIndex = index"
+  <scroll-view scroll-y class="orders">
+    <view class="card" v-for="order in orderList" :key="order.id">
+      <!-- 订单信息 -->
+      <view class="status">
+        <text class="date">{{ order.createTime }}</text>
+        <!-- 订单状态文字 -->
+        <text>{{ orderStateList[order.orderState].text }}</text>
+        <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
+        <text v-if="order.orderState >= OrderState.DaiPingJia" class="icon-delete"></text>
+      </view>
+      <!-- 商品信息，点击商品跳转到订单详情，不是商品详情 -->
+      <navigator
+        v-for="item in order.skus"
+        :key="item.id"
+        class="goods"
+        :url="`/pagesOrder/detail/detail?id=${order.id}`"
+        hover-class="none"
       >
-        {{ item.title }}
-      </text>
-      <!-- 游标 -->
-      <view class="cursor" :style="{ left: activeIndex * 20 + '%' }"></view>
+        <view class="cover">
+          <image mode="aspectFit" :src="item.image"></image>
+        </view>
+        <view class="meta">
+          <view class="name ellipsis">{{ item.name }}</view>
+          <view class="type">{{ item.attrsText }}</view>
+        </view>
+      </navigator>
+      <!-- 支付信息 -->
+      <view class="payment">
+        <text class="quantity">共{{ order.totalNum }}件商品</text>
+        <text>实付</text>
+        <text class="amount"> <text class="symbol">¥</text>{{ order.payMoney }}</text>
+      </view>
+      <!-- 订单操作按钮 -->
+      <view class="action">
+        <!-- 待付款状态：显示去支付按钮 -->
+        <template v-if="order.orderState === OrderState.DaiFuKuan">
+          <view class="button primary">去支付</view>
+        </template>
+        <template v-else>
+          <navigator
+            class="button secondary"
+            :url="`/pagesOrder/create/create?orderId=id`"
+            hover-class="none"
+          >
+            再次购买
+          </navigator>
+          <!-- 待收货状态: 展示确认收货 -->
+          <view v-if="order.orderState === OrderState.DaiShouHuo" class="button primary"
+            >确认收货</view
+          >
+        </template>
+      </view>
     </view>
-    <!-- 滑动容器 -->
-    <swiper class="swiper" :current="activeIndex" @change="activeIndex = $event.detail.current">
-      <!-- 滑动项 -->
-      <swiper-item v-for="item in orderTabs" :key="item.title">
-        <!-- 订单列表 -->
-        <OrderList :order-state="item.orderState" />
-      </swiper-item>
-    </swiper>
-  </view>
+    <!-- 底部提示文字 -->
+    <view class="loading-text" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
+      {{ true ? '没有更多数据~' : '正在加载...' }}
+    </view>
+  </scroll-view>
 </template>
-
 <style lang="scss">
 page {
   height: 100%;
