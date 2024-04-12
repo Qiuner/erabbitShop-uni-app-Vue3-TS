@@ -46,3 +46,11 @@ export const getMemberOrderByIdAPI = (id: string) => {
     url: `/member/order/${id}`,
   })
 }
+
+// 再次购买接口
+export const getRepurchaseOrderByIdAPI = (id: string) => {
+  return http<OrderResult>({
+    method: 'GET',
+    url: `/member/order/repurchase/{id}`,
+  })
+}

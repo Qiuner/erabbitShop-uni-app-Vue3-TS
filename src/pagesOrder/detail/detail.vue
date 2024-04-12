@@ -2,7 +2,7 @@
 import { useGuessList } from '@/composables'
 import { ref } from 'vue'
 import { onLoad, onReady } from '@dcloudio/uni-app'
-import { getMemberOrderByIdAPI } from '@/services/order'
+import { getMemberOrderByIdAPI, getRepurchaseOrderByIdAPI } from '@/services/order'
 import type { OrderResult } from '@/types/order'
 import { OrderState, orderStateList } from '@/services/constants'
 // 获取屏幕边界到安全区域距离
@@ -66,7 +66,8 @@ onReady(() => {
     endScrollOffset: 50,
   })
 })
-
+// 订单页渲染代码
+// order是订单对象
 const order = ref<OrderResult>()
 const getMemberOrderByIdData = async () => {
   const res = await getMemberOrderByIdAPI(query.id)
@@ -75,6 +76,11 @@ const getMemberOrderByIdData = async () => {
 onLoad(() => {
   getMemberOrderByIdData()
 })
+// 再次购买接口
+// TODO
+const getRepurchaseOrderByIdData = (id: string) => {
+  getRepurchaseOrderByIdAPI(id)
+}
 </script>
 
 <template>
@@ -115,6 +121,7 @@ onLoad(() => {
               class="button"
               :url="`/pagesOrder/create/create?orderId=${query.id}`"
               hover-class="none"
+              @tap="getRepurchaseOrderByIdData(query.id)"
             >
               再次购买
             </navigator>
