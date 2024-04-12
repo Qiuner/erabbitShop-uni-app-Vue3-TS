@@ -160,6 +160,12 @@
 					"style": {
 						"navigationBarTitleText": "支付成功页"
 					}
+				},
+				{
+					"path": "list/list",
+					"style": {
+						"navigationBarTitleText": "列表页"
+					}
 				}
 			]
 		}
