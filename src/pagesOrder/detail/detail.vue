@@ -8,10 +8,12 @@ import {
   getMemberOrderCancelByIdAPI,
   getMemberOrderConsignmentByIdAPI,
   getMemberOrderLogisticsByIdAPI,
-  getRepurchaseOrderByIdAPI,
+  getMemberOrderPreAPI,
+  getMemberOrderPreNowAPI,
+  getMemberOrderRepurchaseByIdAPI,
   putMemberOrderReceiptByIdAPI,
 } from '@/services/order'
-import type { LogisticItem, OrderResult } from '@/types/order'
+import type { LogisticItem, OrderPreResult, OrderResult } from '@/types/order'
 import { OrderState, orderStateList } from '@/services/constants'
 import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 // 获取屏幕边界到安全区域距离
@@ -36,10 +38,6 @@ const onCopy = (id: string) => {
   // 设置系统剪贴板的内容
   uni.setClipboardData({ data: id })
 }
-// 获取页面参数
-const query = defineProps<{
-  id: string
-}>()
 
 // 获取页面栈
 const pages = getCurrentPages()
@@ -97,12 +95,36 @@ const getMemberOrderLogisticsByIdData = async () => {
 }
 
 onLoad(() => {
-  getMemberOrderByIdData(), console.log(order)
+  getMemberOrderByIdData()
 })
-// 再次购买接口
-// TODO
-const getRepurchaseOrderByIdData = (id: string) => {
-  getRepurchaseOrderByIdAPI(id)
+// 获取页面参数
+const query = defineProps<{
+  id: string
+  // 不同请求的
+  skuId?: string
+  count?: string
+  orderId?: string
+}>()
+
+// 获取订单信息
+const orderPre = ref<OrderPreResult>()
+const getMemberOrderPreData = async () => {
+  // if (query.count && query.skuId) {
+  //   // 立即购买
+  //   const res = await getMemberOrderPreNowAPI({
+  //     count: query.count,
+  //     skuId: query.skuId,
+  //   })
+  //   orderPre.value = res.result
+  // } else if (query.orderId) {
+  // 再次购买
+  const res = await getMemberOrderRepurchaseByIdAPI(query.orderId!)
+  orderPre.value = res.result
+  // } else {
+  //   // 预付订单
+  //   const res = await getMemberOrderPreAPI()
+  //   orderPre.value = res.result
+  // }
 }
 
 // 倒计时结束事件
@@ -222,7 +244,7 @@ const CancelOrder = () => {
               class="button"
               :url="`/pagesOrder/create/create?orderId=${query.id}`"
               hover-class="none"
-              @tap="getRepurchaseOrderByIdData(query.id)"
+              @tap="getMemberOrderPreData()"
             >
               再次购买
             </navigator>
