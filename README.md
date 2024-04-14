@@ -1,3 +1,10 @@
+## 这是一个学习项目 原项目地址是 https://gitee.com/Megasu/uniapp-shop-vue3-ts/
+
+我将写项目遇到的各种问题都弄到了这个博客上 欢迎观看
+https://blog.csdn.net/qq_61654952?type=blog
+
+https://blog.csdn.net/qq_61654952/article/details/137704990?spm=1001.2014.3001.5502
+
 ## 项目简介
 
 小兔鲜儿项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
